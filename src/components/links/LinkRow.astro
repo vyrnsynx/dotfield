@@ -1,0 +1,35 @@
+---
+import type { ImportantLink } from "../../data/site";
+import LinkPill from "./LinkPill.astro";
+
+type Props = ImportantLink;
+
+const { label, href, display, external = false } = Astro.props;
+---
+
+<li class="link-row">
+  <span class="link-label">{label}</span>
+  <LinkPill href={href} display={display} external={external} />
+</li>
+
+<style>
+  .link-row {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--color-ink-strong);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+    list-style: none;
+  }
+
+  .link-label {
+    white-space: nowrap;
+  }
+</style>

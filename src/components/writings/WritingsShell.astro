@@ -1,0 +1,124 @@
+---
+import SiteMark from "../brand/SiteMark.astro";
+import BackLink from "./BackLink.astro";
+import TaxonomyNav from "./TaxonomyNav.astro";
+import type {
+  WritingCategory,
+  WritingTaxonomyItem,
+} from "../../data/writings";
+
+interface Props {
+  categories: readonly WritingCategory[];
+  tags: readonly WritingTaxonomyItem[];
+  totalCount: number;
+  currentCategory?: string;
+  currentTag?: string;
+  title?: string;
+  description?: string;
+}
+
+const {
+  categories,
+  tags,
+  totalCount,
+  currentCategory,
+  currentTag,
+  title = "Writings",
+  description,
+} = Astro.props;
+---
+
+<div class="writings-shell">
+  <header class="writings-shell__header">
+    <div class="writings-shell__topbar">
+      <a class="writings-shell__brand" href="/" aria-label="Home">
+        <SiteMark label="VyrnSynx" />
+      </a>
+      <BackLink href="/" label="← Home" />
+    </div>
+    <div class="writings-shell__heading">
+      <h1>{title}</h1>
+      {description ? <p>{description}</p> : null}
+    </div>
+  </header>
+
+  <div class="writings-shell__body">
+    <TaxonomyNav
+      categories={categories}
+      tags={tags}
+      currentCategory={currentCategory}
+      currentTag={currentTag}
+      totalCount={totalCount}
+    />
+    <div class="writings-shell__main">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .writings-shell {
+    display: flex;
+    width: 100%;
+    max-width: var(--writings-width);
+    flex-direction: column;
+    gap: var(--section-gap);
+  }
+
+  .writings-shell__header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .writings-shell__topbar {
+    display: flex;
+    min-height: 1.25rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .writings-shell__brand {
+    display: inline-flex;
+    text-decoration: none;
+  }
+
+  .writings-shell__heading h1 {
+    color: var(--color-ink-strong);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-page-title);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+
+  .writings-shell__heading p {
+    max-width: 36rem;
+    margin-block-start: 0.35rem;
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+
+  .writings-shell__body {
+    display: grid;
+    grid-template-columns: var(--writings-sidebar-width) minmax(0, 1fr);
+    align-items: flex-start;
+    gap: var(--writings-gap);
+  }
+
+  .writings-shell__main {
+    min-width: 0;
+    flex: 1;
+  }
+
+  @media (max-width: 50.624rem) {
+    .writings-shell__body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--section-gap);
+    }
+  }
+</style>

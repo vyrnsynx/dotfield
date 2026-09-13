@@ -1,0 +1,107 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: readonly MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+const visibleHeadings = headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3,
+);
+---
+
+{
+  visibleHeadings.length > 0 ? (
+    <div class="article-toc">
+      <nav class="article-toc__desktop" aria-label="On this page">
+        <p>On this page</p>
+        <ol>
+          {visibleHeadings.map((heading) => (
+            <li class:list={[{ "is-nested": heading.depth === 3 }]}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <details class="article-toc__mobile">
+        <summary>On this page</summary>
+        <ol>
+          {visibleHeadings.map((heading) => (
+            <li class:list={[{ "is-nested": heading.depth === 3 }]}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </div>
+  ) : null
+}
+
+<style>
+  .article-toc__desktop {
+    display: none;
+  }
+
+  .article-toc__mobile {
+    border-block: 1px solid var(--color-rule);
+    padding-block: 0.9rem;
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+  }
+
+  .article-toc__mobile summary {
+    width: fit-content;
+    color: var(--color-ink-strong);
+    cursor: pointer;
+  }
+
+  .article-toc ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article-toc li.is-nested {
+    padding-inline-start: 0.75rem;
+  }
+
+  .article-toc a {
+    color: var(--color-label-muted);
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .article-toc a:hover,
+  .article-toc a:focus-visible {
+    color: var(--color-ink-strong);
+  }
+
+  .article-toc a:focus-visible,
+  .article-toc summary:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  @media (min-width: 64rem) {
+    .article-toc__mobile {
+      display: none;
+    }
+
+    .article-toc__desktop {
+      display: block;
+    }
+
+    .article-toc__desktop > p {
+      color: var(--color-label-muted);
+      font-size: var(--font-size-caption);
+      line-height: 1.35;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  }
+</style>

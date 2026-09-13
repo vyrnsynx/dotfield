@@ -1,0 +1,252 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import ArticleHeader from "../../../components/writings/ArticleHeader.astro";
+import ArticleProse from "../../../components/writings/ArticleProse.astro";
+import ArticleTableOfContents from "../../../components/writings/ArticleTableOfContents.astro";
+import BackLink from "../../../components/writings/BackLink.astro";
+import BackToTop from "../../../components/writings/BackToTop.astro";
+import SiteMark from "../../../components/brand/SiteMark.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { writingCategoryPath } from "../../../data/writings";
+import { writingArticleJsonLd } from "../../../lib/seo";
+import { defaultOgImageUrl } from "../../../lib/site-url";
+import {
+  articleLastmod,
+  getPublishedWritings,
+  toWritingListItem,
+  writingSlug,
+} from "../../../lib/writings";
+
+export async function getStaticPaths() {
+  const entries = await getPublishedWritings();
+  return entries.map((entry) => ({
+    params: { slug: writingSlug(entry) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const article = toWritingListItem(entry);
+const { Content, headings } = await render(entry);
+const hasTableOfContents = headings.some(
+  (heading) => heading.depth === 2 || heading.depth === 3,
+);
+const pageTitle = `${entry.data.title} — VyrnSynx`;
+const ogImage = entry.data.cover?.src ?? defaultOgImageUrl();
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={article.description}
+  canonicalPath={article.url}
+  ogType="article"
+  ogImage={ogImage}
+  publishedTime={article.pubDate}
+  modifiedTime={articleLastmod(article)}
+  prefetchWritings
+  jsonLd={writingArticleJsonLd(article, ogImage)}
+>
+  <main class="article-page" id="top">
+    <div class="article-page__shell">
+      <header class="article-page__top">
+        <a class="article-page__brand" href="/" aria-label="Home">
+          <SiteMark label="VyrnSynx" />
+        </a>
+        <div class="article-page__nav">
+          <BackLink
+            href={writingCategoryPath(article.category.slug)}
+            label={`← ${article.category.label}`}
+          />
+          <BackLink href="/" label="Home" />
+        </div>
+      </header>
+
+      <div
+        class:list={[
+          "article-page__layout",
+          { "has-table-of-contents": hasTableOfContents },
+        ]}
+      >
+        {
+          hasTableOfContents ? (
+            <aside class="article-page__toc">
+              <ArticleTableOfContents headings={headings} />
+            </aside>
+          ) : null
+        }
+
+        <article class="article-page__content">
+          <ArticleHeader
+            title={article.title}
+            categorySlug={article.category.slug}
+            categoryLabel={article.category.label}
+            pubDate={article.pubDate}
+            updatedDate={article.updatedDate}
+            description={article.description}
+            author={article.author}
+            tags={article.tags}
+            readingMinutes={article.readingMinutes}
+          />
+
+          {
+            entry.data.cover ? (
+              <figure class="article-page__cover">
+                <Image
+                  src={entry.data.cover}
+                  alt={entry.data.coverAlt ?? ""}
+                  widths={[640, 960, 1280]}
+                  sizes="(max-width: 40rem) 100vw, 40rem"
+                  loading="eager"
+                />
+              </figure>
+            ) : null
+          }
+
+          <ArticleProse>
+            <Content />
+          </ArticleProse>
+
+          <footer class="article-page__footer">
+            <BackLink
+              href={writingCategoryPath(article.category.slug)}
+              label={`← Back to ${article.category.label}`}
+            />
+            <a class="article-page__top-link" href="#top">Back to top</a>
+          </footer>
+        </article>
+      </div>
+    </div>
+  </main>
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  .article-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    padding-block: var(--page-padding-block) max(3.5rem, env(safe-area-inset-bottom));
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
+    background: var(--color-canvas);
+  }
+
+  .article-page__shell {
+    display: flex;
+    width: 100%;
+    max-width: var(--article-shell-width);
+    flex-direction: column;
+    gap: var(--section-gap);
+  }
+
+  .article-page__layout {
+    display: grid;
+    grid-template-columns: minmax(0, var(--article-width));
+    justify-content: center;
+  }
+
+  .article-page__content {
+    display: flex;
+    width: 100%;
+    max-width: var(--article-width);
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .article-page__top {
+    display: flex;
+    min-height: 1.25rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .article-page__brand {
+    display: inline-flex;
+    text-decoration: none;
+  }
+
+  .article-page__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .article-page__toc {
+    min-width: 0;
+    margin-bottom: 2rem;
+  }
+
+  .article-page__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .article-page__top-link {
+    color: var(--color-label-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    text-decoration: none;
+  }
+
+  .article-page__top-link:hover,
+  .article-page__top-link:focus-visible {
+    color: var(--color-ink-strong);
+  }
+
+  .article-page__top-link:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  .article-page__cover {
+    width: 100%;
+    margin: 0;
+  }
+
+  .article-page__cover :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (min-width: 64rem) {
+    .article-page__layout.has-table-of-contents {
+      grid-template-columns: minmax(0, var(--article-width)) var(
+          --article-toc-width
+        );
+      gap: 2.5rem;
+    }
+
+    .article-page__layout.has-table-of-contents .article-page__toc {
+      position: sticky;
+      top: var(--page-padding-block);
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
+      margin-bottom: 0;
+    }
+
+    .article-page__layout.has-table-of-contents .article-page__content {
+      grid-column: 1;
+      grid-row: 1;
+    }
+  }
+
+  @media (max-width: 35.999rem) {
+    .article-page__top {
+      align-items: flex-start;
+    }
+  }
+</style>

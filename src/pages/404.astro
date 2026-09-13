@@ -1,0 +1,67 @@
+---
+import SiteMark from "../components/brand/SiteMark.astro";
+import BackLink from "../components/writings/BackLink.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page not found — VyrnSynx"
+  description="This page is not published."
+  noindex
+>
+  <main class="missing-page">
+    <div class="missing-page__content">
+      <SiteMark />
+      <h1>Page not found</h1>
+      <p>This URL is not a published page.</p>
+      <BackLink href="/" label="← Home" />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .missing-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--page-padding-block);
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
+    background: var(--color-canvas);
+  }
+
+  .missing-page__content {
+    display: flex;
+    width: 100%;
+    max-width: var(--content-width);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .missing-page h1 {
+    color: var(--color-ink-strong);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-page-title);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+
+  .missing-page p {
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+
+  @media (max-width: 50.624rem) {
+    .missing-page {
+      justify-content: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,308 @@
+---
+import type {
+  WritingCategory,
+  WritingTaxonomyItem,
+} from "../../data/writings";
+
+interface Props {
+  categories: readonly WritingCategory[];
+  tags: readonly WritingTaxonomyItem[];
+  initialCategory?: string;
+  initialTag?: string;
+}
+
+const { categories, tags, initialCategory, initialTag } = Astro.props;
+---
+
+<section
+  class="writing-search"
+  data-writing-search
+  data-index-url="/writings/search-index.json"
+  data-initial-category={initialCategory}
+  data-initial-tag={initialTag}
+  aria-label="Search and filter writings"
+>
+  <form class="writing-search__form" action="/writings/" method="get" role="search">
+    <label class="writing-search__field writing-search__field--query">
+      <span>Search</span>
+      <input
+        type="search"
+        name="q"
+        placeholder="Title, summary, author, tag…"
+        autocomplete="off"
+        spellcheck="true"
+      />
+    </label>
+
+    <label class="writing-search__field">
+      <span>Category</span>
+      <select name="category">
+        <option value="" selected={!initialCategory}>All categories</option>
+        {
+          categories.map((category) => (
+            <option
+              value={category.slug}
+              selected={category.slug === initialCategory}
+            >
+              {category.label}
+            </option>
+          ))
+        }
+      </select>
+    </label>
+
+    <label class="writing-search__field">
+      <span>Tag</span>
+      <select name="tag">
+        <option value="" selected={!initialTag}>All tags</option>
+        {
+          tags.map((tag) => (
+            <option value={tag.slug} selected={tag.slug === initialTag}>
+              {tag.label}
+            </option>
+          ))
+        }
+      </select>
+    </label>
+
+    <div class="writing-search__actions">
+      <button type="submit">Search</button>
+      <button type="reset">Clear</button>
+    </div>
+  </form>
+
+  <p class="writing-search__status" data-search-status aria-live="polite"></p>
+
+  <div class="writing-search__results" data-search-results hidden>
+    <ul data-search-list aria-label="Filtered articles"></ul>
+  </div>
+
+  <div data-default-results>
+    <slot />
+  </div>
+
+  <template data-search-result-template>
+    <li class="search-result">
+      <a class="search-result__link" data-result-link rel="prefetch">
+        <span class="search-result__main">
+          <span class="search-result__title" data-result-title></span>
+          <span class="search-result__description" data-result-description></span>
+          <span class="search-result__tags" data-result-tags></span>
+        </span>
+        <span class="search-result__meta">
+          <time data-result-date></time>
+          <span data-result-details></span>
+        </span>
+      </a>
+    </li>
+  </template>
+
+  <noscript>
+    <p class="writing-search__noscript">
+      Search needs JavaScript. Category and tag links remain fully available.
+    </p>
+  </noscript>
+</section>
+
+<script>
+  import "../../scripts/writings-search";
+</script>
+
+<style>
+  .writing-search {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .writing-search__form {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) minmax(9rem, 0.45fr) minmax(
+        9rem,
+        0.45fr
+      );
+    gap: 0.5rem;
+    align-items: end;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .writing-search__field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.45rem;
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    line-height: var(--line-height-body);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .writing-search input,
+  .writing-search select {
+    width: 100%;
+    min-height: 1.75rem;
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 0;
+    padding: 0.25rem 0.45rem;
+    background: var(--color-canvas);
+    color: var(--color-ink-strong);
+    font-size: var(--font-size-body);
+    line-height: 1.2;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .writing-search input::placeholder {
+    color: var(--color-label-muted);
+    opacity: 1;
+  }
+
+  .writing-search input:hover,
+  .writing-search select:hover {
+    border-color: var(--color-ink-strong);
+  }
+
+  .writing-search input:focus-visible,
+  .writing-search select:focus-visible,
+  .writing-search button:focus-visible,
+  .search-result__link:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  .writing-search__actions {
+    display: flex;
+    grid-column: 1 / -1;
+    gap: 0.5rem;
+  }
+
+  .writing-search button {
+    min-height: 1.75rem;
+    border: 0;
+    border-radius: 0;
+    padding: 2px 8px;
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+    cursor: pointer;
+  }
+
+  .writing-search button[type="reset"] {
+    background: transparent;
+    color: var(--color-label-muted);
+  }
+
+  .writing-search button:hover {
+    background: var(--color-accent);
+    color: var(--color-ink-strong);
+  }
+
+  .writing-search__status {
+    min-height: 1.25em;
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+  }
+
+  .writing-search__results[hidden] {
+    display: none;
+  }
+
+  .writing-search__results ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search-result__link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 1.5rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-rule);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .search-result__main,
+  .search-result__meta {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .search-result__main {
+    gap: 0.2rem;
+  }
+
+  .search-result__meta {
+    align-items: flex-end;
+    gap: 0.3rem;
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+
+  .search-result__title {
+    width: fit-content;
+    margin-inline-start: -0.3rem;
+    padding: 0.15rem 0.3rem;
+    color: var(--color-ink-strong);
+    font-size: var(--font-size-list-title);
+    line-height: var(--line-height-body);
+  }
+
+  .search-result__description {
+    max-width: 36rem;
+    color: var(--color-ink-soft);
+    line-height: var(--line-height-body);
+  }
+
+  .search-result__tags {
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    line-height: 1.4;
+  }
+
+  .search-result__link:hover .search-result__title,
+  .search-result__link:focus-visible .search-result__title {
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+  }
+
+  .writing-search__noscript {
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+  }
+
+  @media (max-width: 63.999rem) {
+    .writing-search__form {
+      grid-template-columns: minmax(0, 1fr) minmax(9rem, 0.5fr);
+    }
+
+    .writing-search__field--query {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 39.999rem) {
+    .writing-search__form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .writing-search__field--query {
+      grid-column: auto;
+    }
+
+    .search-result__link {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+
+    .search-result__meta {
+      align-items: flex-start;
+    }
+  }
+</style>

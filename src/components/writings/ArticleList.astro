@@ -1,0 +1,51 @@
+---
+import type { WritingListItem } from "../../lib/writings";
+import ArticleCard from "./ArticleCard.astro";
+
+interface Props {
+  articles: readonly WritingListItem[];
+  emptyLabel?: string;
+}
+
+const {
+  articles,
+  emptyLabel = "No writings in this category yet.",
+} = Astro.props;
+---
+
+<section class="article-list" aria-label="Articles">
+  {
+    articles.length === 0 ? (
+      <p class="article-list__empty">{emptyLabel}</p>
+    ) : (
+      <ul class="article-list__items">
+        {articles.map((article) => (
+          <li>
+            <ArticleCard article={article} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .article-list {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .article-list__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article-list__empty {
+    color: var(--color-label-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+</style>

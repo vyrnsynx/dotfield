@@ -1,0 +1,65 @@
+---
+import BioBody from "../components/bio/BioBody.astro";
+import BioLead from "../components/bio/BioLead.astro";
+import PracticeTags from "../components/bio/PracticeTags.astro";
+import SiteMark from "../components/brand/SiteMark.astro";
+import HeroName from "../components/identity/HeroName.astro";
+import ImportantLinks from "../components/links/ImportantLinks.astro";
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout canonicalPath="/">
+  <main class="home">
+    <div class="home__content">
+      <SiteMark />
+      <div class="home__profile">
+        <HeroName name={site.identity.name} />
+        <BioLead text={site.bio.lead} />
+        <BioBody text={site.bio.body} />
+        <PracticeTags practices={site.bio.practices} />
+      </div>
+      <ImportantLinks
+        heading={site.importantLinks.heading}
+        items={site.importantLinks.items}
+      />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .home {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--page-padding-block);
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
+    background: var(--color-canvas);
+  }
+
+  .home__content {
+    display: flex;
+    width: 100%;
+    max-width: var(--content-width);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--section-gap);
+  }
+
+  .home__profile {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  @media (max-width: 50.624rem) {
+    .home {
+      justify-content: flex-start;
+    }
+  }
+</style>

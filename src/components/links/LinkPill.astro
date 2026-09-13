@@ -1,0 +1,46 @@
+---
+interface Props {
+  href: string;
+  display: string;
+  external?: boolean;
+}
+
+const { href, display, external = false } = Astro.props;
+---
+
+<a
+  class="link-pill"
+  href={href}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noreferrer" : undefined}
+>
+  {display}
+</a>
+
+<style>
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    padding: 2px 5px;
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+    text-decoration: none;
+  }
+
+  .link-pill:hover,
+  .link-pill:focus-visible {
+    background: var(--color-accent);
+    color: var(--color-ink-strong);
+  }
+
+  .link-pill:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+</style>

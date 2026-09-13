@@ -1,0 +1,53 @@
+---
+import type {
+  WritingCategory,
+  WritingTaxonomyItem,
+} from "../../data/writings";
+import type { WritingListItem } from "../../lib/writings";
+import ArticleList from "./ArticleList.astro";
+import SearchFilters from "./SearchFilters.astro";
+import WritingsShell from "./WritingsShell.astro";
+
+interface Props {
+  categories: readonly WritingCategory[];
+  tags: readonly WritingTaxonomyItem[];
+  articles: readonly WritingListItem[];
+  totalCount: number;
+  title: string;
+  description: string;
+  currentCategory?: string;
+  currentTag?: string;
+  emptyLabel?: string;
+}
+
+const {
+  categories,
+  tags,
+  articles,
+  totalCount,
+  title,
+  description,
+  currentCategory,
+  currentTag,
+  emptyLabel,
+} = Astro.props;
+---
+
+<WritingsShell
+  categories={categories}
+  tags={tags}
+  totalCount={totalCount}
+  currentCategory={currentCategory}
+  currentTag={currentTag}
+  title={title}
+  description={description}
+>
+  <SearchFilters
+    categories={categories}
+    tags={tags}
+    initialCategory={currentCategory}
+    initialTag={currentTag}
+  >
+    <ArticleList articles={articles} emptyLabel={emptyLabel} />
+  </SearchFilters>
+</WritingsShell>

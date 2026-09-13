@@ -1,0 +1,79 @@
+---
+import WritingsDirectory from "../../../components/writings/WritingsDirectory.astro";
+import { writingCategoryPath } from "../../../data/writings";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import {
+  writingsCategoryBreadcrumbs,
+  writingsCollectionJsonLd,
+} from "../../../lib/seo";
+import {
+  filterWritingsByCategory,
+  getPublishedWritings,
+  listWritingCategories,
+  listWritingTags,
+  toWritingListItem,
+} from "../../../lib/writings";
+
+export async function getStaticPaths() {
+  const entries = await getPublishedWritings();
+  const categories = listWritingCategories(entries);
+
+  return categories.map((category) => ({
+    params: { category: category.slug },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const allEntries = await getPublishedWritings();
+const categories = listWritingCategories(allEntries);
+const tags = listWritingTags(allEntries);
+const entries = filterWritingsByCategory(allEntries, category.slug);
+const articles = entries.map(toWritingListItem);
+
+const pageTitle = `Writings / ${category.label} — VyrnSynx`;
+const pageDescription = category.description;
+const canonicalPath = writingCategoryPath(category.slug);
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath={canonicalPath}
+  prefetchWritings
+  jsonLd={writingsCollectionJsonLd({
+    path: canonicalPath,
+    name: category.label,
+    description: pageDescription,
+    articles,
+    breadcrumbs: writingsCategoryBreadcrumbs(category.label, category.slug),
+  })}
+>
+  <main class="writings-page" id="top">
+    <WritingsDirectory
+      categories={categories}
+      tags={tags}
+      articles={articles}
+      totalCount={allEntries.length}
+      currentCategory={category.slug}
+      title={category.label}
+      description={category.description}
+      emptyLabel={`No published writing in ${category.label} yet.`}
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .writings-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    padding-block: var(--page-padding-block);
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
+    background: var(--color-canvas);
+  }
+</style>

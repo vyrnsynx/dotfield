@@ -1,0 +1,63 @@
+---
+import WritingsDirectory from "../../components/writings/WritingsDirectory.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  writingsCollectionJsonLd,
+  writingsIndexBreadcrumbs,
+} from "../../lib/seo";
+import {
+  getPublishedWritings,
+  listWritingCategories,
+  listWritingTags,
+  toWritingListItem,
+} from "../../lib/writings";
+
+const entries = await getPublishedWritings();
+const categories = listWritingCategories(entries);
+const tags = listWritingTags(entries);
+const articles = entries.map(toWritingListItem);
+const pageDescription =
+  "Notes on learning, engineering, writing, and the quiet work behind shipping.";
+const pageTitle = "Writings — VyrnSynx";
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath="/writings/"
+  prefetchWritings
+  jsonLd={writingsCollectionJsonLd({
+    path: "/writings/",
+    name: "Writings",
+    description: pageDescription,
+    articles,
+    breadcrumbs: writingsIndexBreadcrumbs(),
+  })}
+>
+  <main class="writings-page" id="top">
+    <WritingsDirectory
+      categories={categories}
+      tags={tags}
+      articles={articles}
+      totalCount={entries.length}
+      title="Writings"
+      description={pageDescription}
+      emptyLabel="No published writing yet."
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .writings-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    padding-block: var(--page-padding-block);
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
+    background: var(--color-canvas);
+  }
+</style>

@@ -1,0 +1,137 @@
+---
+import type { WritingListItem } from "../../lib/writings";
+
+interface Props {
+  article: WritingListItem;
+}
+
+const { article } = Astro.props;
+const dateLabel = article.pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+---
+
+<a class="article-card" href={article.url} rel="prefetch">
+  <span class="article-card__main">
+    {
+      article.featured ? (
+        <span class="article-card__featured">Featured</span>
+      ) : null
+    }
+    <span class="article-card__title">{article.title}</span>
+    <span class="article-card__desc">{article.description}</span>
+    {
+      article.tags.length > 0 ? (
+        <span class="article-card__tags">
+          {article.tags.map((tag) => `#${tag.label}`).join("  ")}
+        </span>
+      ) : null
+    }
+  </span>
+  <span class="article-card__meta">
+    <time datetime={article.pubDate.toISOString()}>{dateLabel}</time>
+    <span>{article.readingMinutes} min read</span>
+    <span>{article.category.label}</span>
+  </span>
+</a>
+
+<style>
+  .article-card {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 1.5rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-rule);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .article-card:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  .article-card__main,
+  .article-card__meta {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .article-card__main {
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .article-card__featured {
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .article-card__title {
+    width: fit-content;
+    margin-inline-start: -0.3rem;
+    padding: 0.15rem 0.3rem;
+    color: var(--color-ink-strong);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-list-title);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+
+  .article-card__meta {
+    align-items: flex-end;
+    gap: 0.3rem;
+    color: var(--color-label-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+
+  .article-card__desc {
+    max-width: 36rem;
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+
+  .article-card__tags {
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    line-height: 1.4;
+  }
+
+  .article-card:hover .article-card__title,
+  .article-card:focus-visible .article-card__title {
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+  }
+
+  @media (max-width: 39.999rem) {
+    .article-card {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+
+    .article-card__meta {
+      align-items: flex-start;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .article-card__meta > :not(:last-child)::after {
+      content: "·";
+      margin-inline: 0.35rem;
+    }
+  }
+</style>

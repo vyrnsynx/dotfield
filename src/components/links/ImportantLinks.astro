@@ -1,0 +1,45 @@
+---
+import type { ImportantLink } from "../../data/site";
+import LinkRow from "./LinkRow.astro";
+
+interface Props {
+  heading: string;
+  items: readonly ImportantLink[];
+}
+
+const { heading, items } = Astro.props;
+---
+
+<section class="important-links" aria-labelledby="important-links-heading">
+  <h2 id="important-links-heading">{heading}</h2>
+  <ul class="link-list">
+    {items.map((item) => <LinkRow {...item} />)}
+  </ul>
+</section>
+
+<style>
+  .important-links,
+  .link-list {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .important-links {
+    gap: var(--link-row-gap);
+  }
+
+  .important-links h2 {
+    color: var(--color-label-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+
+  .link-list {
+    gap: var(--link-row-gap);
+    padding: 0;
+  }
+</style>

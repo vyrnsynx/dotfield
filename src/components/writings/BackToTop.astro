@@ -1,0 +1,73 @@
+---
+/**
+ * Progressive back-to-top control.
+ * Works as a plain #top link with no JS; a tiny script only toggles visibility.
+ */
+---
+
+<a class="back-to-top" id="back-to-top" href="#top">Back to top</a>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 20;
+    display: inline-flex;
+    min-height: 1.75rem;
+    align-items: center;
+    padding: 2px 8px;
+    transform: translateY(0.35rem);
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+    text-decoration: none;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 140ms ease,
+      transform 140ms ease,
+      visibility 140ms;
+  }
+
+  .back-to-top.is-visible {
+    transform: translateY(0);
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .back-to-top:hover,
+  .back-to-top:focus-visible {
+    background: var(--color-accent);
+    color: var(--color-ink-strong);
+  }
+
+  .back-to-top:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var button = document.getElementById("back-to-top");
+    if (!button) return;
+
+    var scroller = document.scrollingElement || document.body;
+
+    var update = function () {
+      var y = window.scrollY || scroller.scrollTop || 0;
+      button.classList.toggle("is-visible", y > 240);
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    document.body.addEventListener("scroll", update, { passive: true });
+  })();
+</script>

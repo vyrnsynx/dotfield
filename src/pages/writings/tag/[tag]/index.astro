@@ -1,0 +1,78 @@
+---
+import WritingsDirectory from "../../../../components/writings/WritingsDirectory.astro";
+import { writingTagPath } from "../../../../data/writings";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import {
+  writingsCollectionJsonLd,
+  writingsTagBreadcrumbs,
+} from "../../../../lib/seo";
+import {
+  filterWritingsByTag,
+  getPublishedWritings,
+  listWritingCategories,
+  listWritingTags,
+  toWritingListItem,
+} from "../../../../lib/writings";
+
+export async function getStaticPaths() {
+  const entries = await getPublishedWritings();
+  const tags = listWritingTags(entries);
+
+  return tags.map((tag) => ({
+    params: { tag: tag.slug },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const allEntries = await getPublishedWritings();
+const categories = listWritingCategories(allEntries);
+const tags = listWritingTags(allEntries);
+const entries = filterWritingsByTag(allEntries, tag.slug);
+const articles = entries.map(toWritingListItem);
+const pageTitle = `Writings / #${tag.label} — VyrnSynx`;
+const pageDescription = `Published writing tagged ${tag.label}.`;
+const canonicalPath = writingTagPath(tag.slug);
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath={canonicalPath}
+  prefetchWritings
+  jsonLd={writingsCollectionJsonLd({
+    path: canonicalPath,
+    name: `#${tag.label}`,
+    description: pageDescription,
+    articles,
+    breadcrumbs: writingsTagBreadcrumbs(tag.label, tag.slug),
+  })}
+>
+  <main class="writings-page" id="top">
+    <WritingsDirectory
+      categories={categories}
+      tags={tags}
+      articles={articles}
+      totalCount={allEntries.length}
+      currentTag={tag.slug}
+      title={`#${tag.label}`}
+      description={pageDescription}
+      emptyLabel={`No published writing tagged ${tag.label} yet.`}
+    />
+  </main>
+</BaseLayout>
+
+<style>
+  .writings-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    align-items: center;
+    padding-block: var(--page-padding-block);
+    padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
+      max(var(--page-gutter), env(safe-area-inset-right));
+    background: var(--color-canvas);
+  }
+</style>

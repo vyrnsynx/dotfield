@@ -1,0 +1,75 @@
+:root {
+  --color-canvas: #ffffff;
+  --color-ink: #171717;
+  --color-ink-strong: #000000;
+  --color-ink-soft: rgba(0, 0, 0, 0.75);
+  --color-muted: rgba(0, 0, 0, 0.5);
+  --color-label-muted: #7f7f7f;
+  --color-pill-ink: #ffffff;
+  --color-accent: #beadff;
+  --color-rule: #e8e8e8;
+  --color-rule-strong: #c9c9c9;
+  --color-surface-soft: #f6f6f4;
+  --color-code-bg: #ffffff;
+  --cb-mac-bar-height: 36px;
+  --cb-mac-dot-size: 12px;
+  --cb-code-padding: 1em;
+  --cb-gutter-width: 2.5em;
+  --cb-gutter-gap: 1em;
+  --cb-gutter-color: #8b8b8b;
+  --cb-max-height: 400px;
+  --cb-bar-bg: #f5f5f5;
+  --cb-bar-border: #e6e6e6;
+  --cb-dot-red: #ff5f56;
+  --cb-dot-yellow: #ffbd2e;
+  --cb-dot-green: #27c93f;
+  --cb-button-bg-hover: rgba(0, 0, 0, 0.06);
+  --cb-button-bg-active: rgba(0, 0, 0, 0.1);
+  --cb-scrollbar-thumb: #c9c9c9;
+  --cb-scrollbar-track: #f5f5f5;
+  --scrollbar-size: 10px;
+  --scrollbar-thumb: #c4c4c4;
+  --scrollbar-thumb-hover: #8a8a8a;
+  --scrollbar-track: transparent;
+  --cb-shadow-resting:
+    0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --cb-shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* Inter Medium at 12px is the official jckhlry.com identity. */
+  --font-sans: "Inter", Arial, sans-serif;
+  --font-size-caption: 12px;
+  --font-size-body: 12px;
+  --font-size-list-title: 12px;
+  --font-size-article: 14px;
+  --font-size-code: 13px;
+  --font-size-page-title: 12px;
+  --font-size-article-title: 1.25rem;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --line-height-body: 1.2;
+  --line-height-article: 1.55;
+  --letter-spacing-body: 0;
+
+  /*
+    Root html stays at 16px. These rem widths therefore match the official
+    Framer measurements: 600px home column, 25px inset, 30px section gap.
+    Do not set html { font-size: 12px } — that shrinks every rem layout.
+  */
+  --content-width: 37.5rem;
+  --writings-width: 52rem;
+  --article-shell-width: 56rem;
+  --article-width: 40rem;
+  --article-toc-width: 11rem;
+  --page-gutter: 1.5625rem;
+  --page-padding-block: 1.5625rem;
+  --section-gap: 1.875rem;
+  --link-row-gap: 0.1875rem;
+  --writings-sidebar-width: 9.5rem;
+  --writings-gap: 2.5rem;
+  --focus-ring: 0.125rem solid var(--color-ink-strong);
+  --focus-offset: 0.125rem;
+
+  --breakpoint-stack: 50.625rem;
+  --breakpoint-phone: 40rem;
+  --breakpoint-desktop: 64rem;
+}

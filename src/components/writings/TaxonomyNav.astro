@@ -1,0 +1,262 @@
+---
+import {
+  writingCategoryPath,
+  writingTagPath,
+  type WritingCategory,
+  type WritingTaxonomyItem,
+} from "../../data/writings";
+
+interface Props {
+  categories: readonly WritingCategory[];
+  tags: readonly WritingTaxonomyItem[];
+  currentCategory?: string;
+  currentTag?: string;
+  totalCount: number;
+}
+
+const {
+  categories,
+  tags,
+  currentCategory,
+  currentTag,
+  totalCount,
+} = Astro.props;
+const allIsCurrent = !currentCategory && !currentTag;
+---
+
+<nav class="taxonomy-nav" aria-label="Browse writings">
+  <section class="taxonomy-nav__group" aria-labelledby="category-heading">
+    <h2 id="category-heading">Categories</h2>
+    <ul>
+      <li>
+        <a
+          class:list={["taxonomy-nav__item", { "is-active": allIsCurrent }]}
+          href="/writings/"
+          aria-current={allIsCurrent ? "page" : undefined}
+        >
+          <span>All writings</span>
+          <span class="taxonomy-nav__count">{totalCount}</span>
+        </a>
+      </li>
+      {
+        categories.map((category) => {
+          const active = category.slug === currentCategory;
+          return (
+            <li>
+              <a
+                class:list={[
+                  "taxonomy-nav__item",
+                  { "is-active": active },
+                ]}
+                href={writingCategoryPath(category.slug)}
+                aria-current={active ? "page" : undefined}
+              >
+                <span>{category.label}</span>
+                <span class="taxonomy-nav__count">{category.count}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+
+  {
+    tags.length > 0 ? (
+      <>
+        <section
+          class="taxonomy-nav__group taxonomy-nav__tags-desktop"
+          aria-labelledby="tag-heading"
+        >
+          <h2 id="tag-heading">Tags</h2>
+          <ul class="taxonomy-nav__tags">
+            {tags.map((tag) => {
+              const active = tag.slug === currentTag;
+              return (
+                <li>
+                  <a
+                    class:list={[
+                      "taxonomy-nav__item",
+                      "taxonomy-nav__tag",
+                      { "is-active": active },
+                    ]}
+                    href={writingTagPath(tag.slug)}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    <span>{tag.label}</span>
+                    <span class="taxonomy-nav__count">{tag.count}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <details class="taxonomy-nav__tags-mobile">
+          <summary>Tags ({tags.length})</summary>
+          <ul class="taxonomy-nav__tags">
+          {tags.map((tag) => {
+            const active = tag.slug === currentTag;
+            return (
+              <li>
+                <a
+                  class:list={[
+                    "taxonomy-nav__item",
+                    "taxonomy-nav__tag",
+                    { "is-active": active },
+                  ]}
+                  href={writingTagPath(tag.slug)}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <span>{tag.label}</span>
+                  <span class="taxonomy-nav__count">{tag.count}</span>
+                </a>
+              </li>
+            );
+          })}
+          </ul>
+        </details>
+      </>
+    ) : null
+  }
+</nav>
+
+<style>
+  .taxonomy-nav {
+    position: sticky;
+    top: var(--page-padding-block);
+    display: flex;
+    width: var(--writings-sidebar-width);
+    flex: none;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .taxonomy-nav__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .taxonomy-nav__tags-mobile {
+    display: none;
+  }
+
+  .taxonomy-nav h2 {
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .taxonomy-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .taxonomy-nav__item {
+    display: flex;
+    width: 100%;
+    min-height: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 2px 5px;
+    color: var(--color-ink-strong);
+    text-decoration: none;
+  }
+
+  .taxonomy-nav__item.is-active {
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+  }
+
+  .taxonomy-nav__item:not(.is-active):hover,
+  .taxonomy-nav__item:not(.is-active):focus-visible {
+    background: var(--color-accent);
+  }
+
+  .taxonomy-nav__item:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  .taxonomy-nav__count {
+    color: var(--color-label-muted);
+    font-size: var(--font-size-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .taxonomy-nav__item.is-active .taxonomy-nav__count {
+    color: inherit;
+    opacity: 0.72;
+  }
+
+  @media (max-width: 50.624rem) {
+    .taxonomy-nav {
+      position: static;
+      width: 100%;
+      flex-direction: row;
+      gap: var(--section-gap);
+    }
+
+    .taxonomy-nav__group {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .taxonomy-nav__tags-desktop {
+      display: none;
+    }
+
+    .taxonomy-nav__tags-mobile {
+      display: block;
+      min-width: 0;
+      flex: 1;
+      color: var(--color-label-muted);
+    }
+
+    .taxonomy-nav__tags-mobile summary {
+      width: fit-content;
+      min-height: 2rem;
+      color: var(--color-ink-strong);
+      cursor: pointer;
+      align-content: center;
+    }
+
+    .taxonomy-nav__tags-mobile summary:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: var(--focus-offset);
+    }
+
+    .taxonomy-nav__tags-mobile ul {
+      margin-top: 0.625rem;
+    }
+
+    .taxonomy-nav ul {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+    }
+
+    .taxonomy-nav__item {
+      width: auto;
+      min-height: 2rem;
+      gap: 0.4rem;
+      padding: 0.25rem 0.45rem;
+    }
+  }
+
+  @media (max-width: 35.999rem) {
+    .taxonomy-nav {
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+  }
+</style>

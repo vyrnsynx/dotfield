@@ -1,0 +1,28 @@
+# Build output
+dist/
+
+# Generated Astro files
+.astro/
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.production
+
+# Editor and operating system files
+.DS_Store
+.idea/
+.vscode/
+
+# Local reference materials and disposable scaffold
+_reference/
+bustling-binary/
+.superdesign/tmp/

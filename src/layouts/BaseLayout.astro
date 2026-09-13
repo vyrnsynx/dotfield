@@ -1,0 +1,146 @@
+---
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import { site } from "../data/site";
+import { siteGraphJsonLd, type JsonLd } from "../lib/seo";
+import { absoluteUrl, defaultOgImageUrl } from "../lib/site-url";
+import "../styles/global.css";
+
+type OgType = "website" | "article";
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  ogType?: OgType;
+  ogImage?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  noindex?: boolean;
+  jsonLd?: readonly JsonLd[];
+  prefetchWritings?: boolean;
+}
+
+const {
+  title = site.metadata.title,
+  description = site.metadata.description,
+  canonicalPath,
+  ogType = "website",
+  ogImage,
+  publishedTime,
+  modifiedTime,
+  noindex = false,
+  jsonLd = [],
+  prefetchWritings = false,
+} = Astro.props;
+
+const resolvedCanonicalPath = canonicalPath ?? Astro.url.pathname;
+const canonicalUrl = absoluteUrl(resolvedCanonicalPath);
+const imageUrl = ogImage ? absoluteUrl(ogImage) : defaultOgImageUrl();
+const structuredData = JSON.stringify(siteGraphJsonLd(jsonLd)).replaceAll(
+  "<",
+  "\\u003c",
+);
+const robots = noindex ? "noindex, nofollow" : "index, follow";
+const twitterCard = "summary_large_image";
+const openGraphType = openGraphTypeValue(ogType);
+const speculationRules = JSON.stringify({
+  prefetch: [
+    {
+      source: "document",
+      where: { href_matches: "/writings/*" },
+      eagerness: "moderate",
+    },
+  ],
+});
+
+function openGraphTypeValue(value: OgType): string {
+  switch (value) {
+    case "website":
+      return "website";
+    case "article":
+      return "article";
+    default: {
+      const exhaustive: never = value;
+      throw new Error(`Unhandled Open Graph type: ${String(exhaustive)}`);
+    }
+  }
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#ffffff" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon-light.svg"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon-dark.svg"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${site.identity.name} Writings`}
+      href="/rss.xml"
+    />
+    {
+      noindex ? null : (
+        <>
+          <link rel="canonical" href={canonicalUrl} />
+          <meta property="og:url" content={canonicalUrl} />
+        </>
+      )
+    }
+    <meta property="og:type" content={openGraphType} />
+    <meta property="og:site_name" content={site.identity.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    {
+      publishedTime ? (
+        <meta
+          property="article:published_time"
+          content={publishedTime.toISOString()}
+        />
+      ) : null
+    }
+    {
+      modifiedTime ? (
+        <meta
+          property="article:modified_time"
+          content={modifiedTime.toISOString()}
+        />
+      ) : null
+    }
+    <meta name="twitter:card" content={twitterCard} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <title>{title}</title>
+    <script type="application/ld+json" set:html={structuredData} />
+    {
+      prefetchWritings ? (
+        <script type="speculationrules" set:html={speculationRules} />
+      ) : null
+    }
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

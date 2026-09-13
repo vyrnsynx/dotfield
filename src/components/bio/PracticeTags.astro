@@ -1,0 +1,21 @@
+---
+interface Props {
+  practices: readonly string[];
+}
+
+const { practices } = Astro.props;
+---
+
+<p class="practice-tags">{practices.join(" \\ ")}</p>
+
+<style>
+  .practice-tags {
+    margin-block-start: 1.2em;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+</style>
