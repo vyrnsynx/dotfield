@@ -146,7 +146,7 @@ vertically centered. Safe-area insets are added on top of the 25px gutter so
 notched phones do not clip the content.
 
 The homepage must remain free of executable JavaScript. JSON-LD is allowed.
-Do not attach analytics widgets, search, or hydration islands here.
+Do not attach third-party analytics widgets, search, or hydration islands here. Vercel Web Analytics and Speed Insights may load via `@vercel/analytics/astro` and `@vercel/speed-insights/astro` in `BaseLayout` only — no other analytics SDKs.
 
 ## Writings content pipeline
 
