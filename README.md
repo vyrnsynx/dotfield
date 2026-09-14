@@ -1,11 +1,11 @@
 # dotfield
 
 A static personal site and folder-driven Markdown blog. The homepage is
-static HTML with no executable JavaScript (JSON-LD is allowed). Writings
-pages are also static: Astro discovers Markdown at build time, validates
-English frontmatter, emits category, tag, and article routes, and writes a
-metadata-only search index plus sitemap, robots, RSS, and `llms.txt` from
-the published collection.
+static HTML with no UI JavaScript (JSON-LD and a DevTools console
+signature are allowed). Writings pages are also static: Astro discovers
+Markdown at build time, validates English frontmatter, emits category,
+tag, and article routes, and writes a metadata-only search index plus
+sitemap, robots, RSS, and `llms.txt` from the published collection.
 
 The compact homepage language is referenced from
 [jckhlry.com](https://www.jckhlry.com/). Everything else — the Writings
@@ -289,7 +289,7 @@ published set.
 
 | URL                           | What it is                                     |
 | ----------------------------- | ---------------------------------------------- |
-| `/`                           | Homepage. No executable JavaScript.            |
+| `/`                           | Homepage. JSON-LD plus a console signature     |
 | `/writings/`                  | All published articles plus progressive search |
 | `/writings/<category>/`       | One category                                   |
 | `/writings/tag/<tag>/`        | One tag                                        |
@@ -297,7 +297,7 @@ published set.
 | `/writings/search-index.json` | Published metadata only, `noindex`             |
 | `/sitemap.xml`                | Published HTML routes only                     |
 | `/robots.txt`                 | Crawler rules plus sitemap pointer             |
-| `/rss.xml`                    | Published writings feed                        |
+| `/rss.xml`                    | Published writings feed. Subscribe here        |
 | `/llms.txt`                   | Published titles, URLs, and summaries          |
 | `/404/`                       | Not found, `noindex`                           |
 
@@ -309,8 +309,9 @@ query parameters.
 
 ## Client JavaScript policy
 
-- Homepage: no executable JavaScript. JSON-LD in the document head is
-allowed. Public HTML must not name the edge host or the site generator.
+- Homepage: no UI JavaScript. JSON-LD in the document head is allowed, and
+one inline script prints author and source in the DevTools console. Public
+HTML must not name the edge host or the site generator.
 - Writings listings: the bundled search controller, native `rel="prefetch"`
 on article cards, and Chromium speculation rules for `/writings/*`.
 - Articles: `article-code-blocks.ts` (Copy + “Copied” pill) and a tiny
@@ -367,3 +368,6 @@ docs: document draft workflow and search index fields
 
 Keep unrelated modules in separate commits. The commit body should explain
 why the change exists, what it changes, and the reader or maintenance impact.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request.
+The project is licensed under Apache-2.0.

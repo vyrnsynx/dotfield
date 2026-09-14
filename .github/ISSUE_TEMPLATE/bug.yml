@@ -1,0 +1,43 @@
+name: Bug
+description: Something on the site or in the build is wrong
+title: "fix: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues first. Keep the report in English.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: What you saw versus what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: Routes, viewport, and commands. Include `npm run build` output if the build failed.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - Homepage
+        - Writings listing or search
+        - Article
+        - Discovery (sitemap, RSS, robots, llms.txt)
+        - Build or tooling
+        - Docs
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context
+      description: Screenshots, browser, or related files.
+    validations:
+      required: false

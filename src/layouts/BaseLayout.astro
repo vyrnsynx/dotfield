@@ -142,5 +142,19 @@ function openGraphTypeValue(value: OgType): string {
   </head>
   <body>
     <slot />
+    <script is:inline define:vars={{ rssFeedUrl: absoluteUrl("/rss.xml") }}>
+      (function () {
+        var titleStyle =
+          "font-family:Inter,Arial,sans-serif;font-size:14px;font-weight:500;color:#000000;background:#ffffff;padding:12px 14px 2px;line-height:1.4;";
+        var metaStyle =
+          "font-family:Inter,Arial,sans-serif;font-size:12px;font-weight:500;color:#7f7f7f;background:#ffffff;padding:2px 14px 12px;line-height:1.5;";
+        console.log(
+          "%cVyrnSynx%c\nAuthor  VyrnSynx\nSource  https://github.com/vyrnsynx/dotfield\nRSS     " +
+            rssFeedUrl,
+          titleStyle,
+          metaStyle,
+        );
+      })();
+    </script>
   </body>
 </html>
