@@ -1,6 +1,7 @@
 ---
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
+import SpeedInsights from "@vercel/speed-insights/astro";
 import { site } from "../data/site";
 import { siteGraphJsonLd, type JsonLd } from "../lib/seo";
 import { absoluteUrl, defaultOgImageUrl } from "../lib/site-url";
@@ -142,6 +143,7 @@ function openGraphTypeValue(value: OgType): string {
   </head>
   <body>
     <slot />
+    <SpeedInsights />
     <script is:inline define:vars={{ rssFeedUrl: absoluteUrl("/rss.xml") }}>
       (function () {
         var titleStyle =
