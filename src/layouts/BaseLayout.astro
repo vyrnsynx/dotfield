@@ -1,12 +1,14 @@
 ---
-import "@fontsource/inter/latin-400.css";
-import "@fontsource/inter/latin-500.css";
+import interLatin400 from "@fontsource/inter/files/inter-latin-400-normal.woff2?url";
+import interLatin500 from "@fontsource/inter/files/inter-latin-500-normal.woff2?url";
 import Analytics from "@vercel/analytics/astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
 import { site } from "../data/site";
 import { siteGraphJsonLd, type JsonLd } from "../lib/seo";
 import { absoluteUrl, defaultOgImageUrl } from "../lib/site-url";
 import "../styles/global.css";
+
+const fontFaceCss = `<style>@font-face{font-family:"Inter";font-style:normal;font-display:swap;font-weight:400;src:url(${JSON.stringify(interLatin400)}) format("woff2")}@font-face{font-family:"Inter";font-style:normal;font-display:swap;font-weight:500;src:url(${JSON.stringify(interLatin500)}) format("woff2")}</style>`;
 
 type OgType = "website" | "article";
 
@@ -81,6 +83,21 @@ function openGraphTypeValue(value: OgType): string {
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     <meta name="theme-color" content="#ffffff" />
+    <link
+      rel="preload"
+      href={interLatin500}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={interLatin400}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <Fragment set:html={fontFaceCss} />
     <link
       rel="icon"
       type="image/svg+xml"
