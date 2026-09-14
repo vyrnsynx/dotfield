@@ -324,7 +324,9 @@ import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
 ```
 
-The build emits hashed `_astro/inter-latin-*.woff2` files. Do not restore
+The build emits hashed `_astro/inter-latin-*.woff2` files. `BaseLayout`
+preloads the Latin 400 and 500 WOFF2 files and declares `@font-face` with
+`font-display: swap` and WOFF2 only (no WOFF fallback). Do not restore
 broken `/fonts/*` preloads. Do not load Google Fonts at runtime.
 
 `BaseLayout.astro` builds a per-page canonical URL from
