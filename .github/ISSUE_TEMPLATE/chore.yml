@@ -1,0 +1,31 @@
+name: Chore
+description: Repo, docs, license, package metadata, or other non-feature work
+title: "chore: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for packaging, templates, license, or docs that are not a
+        reader-facing feature.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What is misaligned or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ]
+    validations:
+      required: true

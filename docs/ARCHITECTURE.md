@@ -10,8 +10,8 @@ and how to extend the site without collapsing those boundaries.
 1. Keep a faithful, compact remake of the official homepage language.
 2. Host a static Markdown blog that appears automatically from files on disk.
 3. Stay backend-free: no database, no admin UI, no runtime content API.
-4. Keep JavaScript optional and tiny. The homepage ships no executable
-   JavaScript (JSON-LD is allowed).
+4. Keep JavaScript optional and tiny. The homepage ships no UI JavaScript
+   (JSON-LD and a DevTools console signature are allowed).
 5. Make content, presentation, and route composition independently editable.
 6. Stay fully static at the edge: no server adapter, no runtime API, no
    origin work per reader.
@@ -385,13 +385,14 @@ Rules that must hold at every width:
 
 | Page | Scripts | Purpose |
 | --- | --- | --- |
-| `/` | none executable | JSON-LD only |
+| `/` | console signature | JSON-LD plus a DevTools author/source banner |
 | `/writings/**` listings | `writings-search.ts` | Combined filters |
 | `/writings/post/**` | `article-code-blocks.ts` and `BackToTop` | Copy confirmation; show / hide the control |
 
-Writings listing and article pages also include a non-executable
-`speculationrules` block. If a feature needs more JavaScript than that, it
-is probably the wrong feature for this site.
+Every page includes the same non-network console signature. Writings listing
+and article pages also include a non-executable `speculationrules` block. If
+a feature needs more JavaScript than that, it is probably the wrong feature
+for this site.
 
 ## Accessibility
 
@@ -417,8 +418,8 @@ is probably the wrong feature for this site.
 5. Compose the module in `src/pages/index.astro`.
 6. Check heading order, keyboard focus, external-link safety, and both sides
    of the 810px breakpoint.
-7. Run `npm run build`. Confirm the homepage HTML still contains no
-   executable `<script>`. JSON-LD is allowed.
+7. Run `npm run build`. Confirm the homepage still has no UI JavaScript.
+   JSON-LD and the DevTools console signature are allowed.
 
 ## Adding writings behavior
 

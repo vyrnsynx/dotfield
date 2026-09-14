@@ -1,0 +1,30 @@
+name: Feature
+description: Propose a focused addition that fits the static site
+title: "feat: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Features must stay inside the existing architecture. Do not propose a
+        CMS, MDX, a search library, a UI framework, or a backend.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should a reader or operator be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Proposed approach
+      description: Which files or collections would change? Keep the homepage compact.
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+    validations:
+      required: false

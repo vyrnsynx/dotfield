@@ -1,8 +1,9 @@
 {
-  "name": "jack-hillery-portfolio",
+  "name": "dotfield",
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "engines": {
     "node": ">=22.12.0"
   },
