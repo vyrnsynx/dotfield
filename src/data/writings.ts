@@ -28,6 +28,12 @@ const writingCategoryDefinitions: readonly WritingCategoryDefinition[] = [
     order: 10,
   },
   {
+    slug: "ai",
+    label: "AI",
+    description: "Models, agents, and decision systems in production.",
+    order: 15,
+  },
+  {
     slug: "engineering",
     label: "Engineering",
     description: "Backend, vibe coding, and small shipped experiments.",
