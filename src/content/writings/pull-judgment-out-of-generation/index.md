@@ -6,12 +6,7 @@ category: ai
 tags:
   - Agents
   - LLM
-  - Context Management
-  - Structured Output
-  - Decision Systems
 pubDate: 2026-09-21
-cover: ./fig1-four-layer-stack.png
-coverAlt: "Four-layer agent stack: slow LLM, fast judgment, deterministic code, and fallback."
 featured: true
 draft: false
 ---
