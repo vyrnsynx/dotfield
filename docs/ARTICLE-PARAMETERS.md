@@ -243,8 +243,11 @@ Do not store writings images in `public/`. Shared media belongs in
 | Type | Boolean |
 | Default | `false` |
 
-Featured published posts sort above all non-featured posts on every
-listing, then by `pubDate`. The card shows a “Featured” caption.
+The card shows a “Featured” caption. On category pages, tag pages, and
+in RSS, featured posts sort above other posts, then by newest `pubDate`.
+On `/writings/` the flag is only a small lift inside the recommendation
+score documented in `docs/ARCHITECTURE.md`. A newer unfeatured article
+can rank first.
 
 ### `draft`
 
@@ -277,6 +280,7 @@ The build computes these. They are not YAML keys.
 | `category.label` | Definition or title-cased slug | UI, JSON-LD `articleSection` |
 | `tags[].slug` | Normalized label | Tag URLs |
 | `wordCount` | Body after stripping fences, inline code, images, most punctuation | JSON-LD `wordCount` |
+| `recommendScore` | Freshness, depth, a small featured lift, and a small update lift | Writings index order and `/writings/search-index.json` only |
 | `readingMinutes` | `ceil(wordCount / 220)`, minimum 1 | Cards, byline, JSON-LD `timeRequired` |
 | `lastmod` | `updatedDate ?? pubDate` | Sitemap, Open Graph modified time |
 | JSON-LD `keywords` | Category label + tag labels | Structured data only (no `keywords` meta tag) |
@@ -308,7 +312,7 @@ punctuation) feeds the auto `description` when that field is omitted.
 | `updatedDate` | — | “Updated …” | yes | `modified_time` | `dateModified` | sitemap lastmod |
 | `cover` | — | hero | — | `og:image` | `image` | — |
 | `coverAlt` | — | img alt | — | — | — | — |
-| `featured` | caption + sort | — | — | — | — | — |
+| `featured` | caption; pin on archives only | — | via `recommendScore` | — | — | — |
 | `draft` | excluded | excluded | excluded | excluded | excluded | excluded |
 | word count / reading time | minutes | minutes | minutes | — | `wordCount`, `timeRequired` | — |
 
