@@ -6,6 +6,8 @@ import ArticleProse from "../../../components/writings/ArticleProse.astro";
 import ArticleTableOfContents from "../../../components/writings/ArticleTableOfContents.astro";
 import BackLink from "../../../components/writings/BackLink.astro";
 import BackToTop from "../../../components/writings/BackToTop.astro";
+import ImageLightbox from "../../../components/writings/ImageLightbox.astro";
+import ReadingPreferences from "../../../components/writings/ReadingPreferences.astro";
 import SiteMark from "../../../components/brand/SiteMark.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { writingCategoryPath } from "../../../data/writings";
@@ -95,8 +97,9 @@ const ogImage = entry.data.cover?.src ?? defaultOgImageUrl();
                 <Image
                   src={entry.data.cover}
                   alt={entry.data.coverAlt ?? ""}
-                  widths={[640, 960, 1280]}
+                  layout="constrained"
                   sizes="(max-width: 40rem) 100vw, 40rem"
+                  fit="contain"
                   loading="eager"
                 />
               </figure>
@@ -118,6 +121,8 @@ const ogImage = entry.data.cover?.src ?? defaultOgImageUrl();
       </div>
     </div>
   </main>
+  <ImageLightbox />
+  <ReadingPreferences />
   <BackToTop />
 </BaseLayout>
 
@@ -129,7 +134,7 @@ const ogImage = entry.data.cover?.src ?? defaultOgImageUrl();
     min-height: 100svh;
     flex-direction: column;
     align-items: center;
-    padding-block: var(--page-padding-block) max(3.5rem, env(safe-area-inset-bottom));
+    padding-block: var(--page-padding-block) max(4.75rem, env(safe-area-inset-bottom));
     padding-inline: max(var(--page-gutter), env(safe-area-inset-left))
       max(var(--page-gutter), env(safe-area-inset-right));
     background: var(--color-canvas);
