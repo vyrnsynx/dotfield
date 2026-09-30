@@ -8,6 +8,8 @@ import ArticleList from "./ArticleList.astro";
 import SearchFilters from "./SearchFilters.astro";
 import WritingsShell from "./WritingsShell.astro";
 
+type WritingListOrder = "recommend" | "chronological";
+
 interface Props {
   categories: readonly WritingCategory[];
   tags: readonly WritingTaxonomyItem[];
@@ -15,6 +17,7 @@ interface Props {
   totalCount: number;
   title: string;
   description: string;
+  order?: WritingListOrder;
   currentCategory?: string;
   currentTag?: string;
   emptyLabel?: string;
@@ -27,6 +30,7 @@ const {
   totalCount,
   title,
   description,
+  order = "chronological",
   currentCategory,
   currentTag,
   emptyLabel,
@@ -47,6 +51,7 @@ const {
     tags={tags}
     initialCategory={currentCategory}
     initialTag={currentTag}
+    order={order}
   >
     <ArticleList articles={articles} emptyLabel={emptyLabel} />
   </SearchFilters>

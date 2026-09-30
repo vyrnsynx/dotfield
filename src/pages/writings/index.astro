@@ -9,13 +9,14 @@ import {
   getPublishedWritings,
   listWritingCategories,
   listWritingTags,
+  rankWritingsForIndex,
   toWritingListItem,
 } from "../../lib/writings";
 
 const entries = await getPublishedWritings();
 const categories = listWritingCategories(entries);
 const tags = listWritingTags(entries);
-const articles = entries.map(toWritingListItem);
+const articles = rankWritingsForIndex(entries.map(toWritingListItem));
 const pageDescription =
   "Notes on learning, engineering, writing, and the quiet work behind shipping.";
 const pageTitle = "Writings — VyrnSynx";
@@ -40,6 +41,7 @@ const pageTitle = "Writings — VyrnSynx";
       tags={tags}
       articles={articles}
       totalCount={entries.length}
+      order="recommend"
       title="Writings"
       description={pageDescription}
       emptyLabel="No published writing yet."
