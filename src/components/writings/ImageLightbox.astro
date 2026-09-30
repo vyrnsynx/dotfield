@@ -1,0 +1,270 @@
+<dialog
+  class="lightbox"
+  data-article-lightbox
+  aria-label="Enlarged image"
+>
+  <div class="lightbox__bar" data-lightbox-keep>
+    <p class="lightbox__count" data-lightbox-count></p>
+    <form method="dialog">
+      <button class="lightbox__close" type="submit">Close</button>
+    </form>
+  </div>
+  <button
+    class="lightbox__nav lightbox__nav--prev"
+    type="button"
+    data-lightbox-prev
+    data-lightbox-keep
+    aria-label="Previous image"
+  >
+    Prev
+  </button>
+  <figure class="lightbox__figure" data-lightbox-keep>
+    <img alt="" data-lightbox-image draggable="false" />
+    <figcaption data-lightbox-caption hidden></figcaption>
+  </figure>
+  <button
+    class="lightbox__nav lightbox__nav--next"
+    type="button"
+    data-lightbox-next
+    data-lightbox-keep
+    aria-label="Next image"
+  >
+    Next
+  </button>
+</dialog>
+
+<script>
+  import "../../scripts/article-lightbox";
+</script>
+
+<style is:global>
+  .zoom-frame {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: zoom-in;
+  }
+
+  .zoom-frame img,
+  .zoom-frame picture {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .zoom-frame::after {
+    content: "Enlarge";
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    padding: 2px 6px;
+    background: #171717;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease;
+  }
+
+  .zoom-frame:hover::after,
+  .zoom-frame:focus-visible::after {
+    opacity: 1;
+  }
+
+  .zoom-frame:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  body.lightbox-open {
+    overflow: hidden;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    padding:
+      max(0.75rem, env(safe-area-inset-top))
+      max(0.75rem, env(safe-area-inset-right))
+      max(0.75rem, env(safe-area-inset-bottom))
+      max(0.75rem, env(safe-area-inset-left));
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: center;
+    background: transparent;
+    color: #f4f4f4;
+    opacity: 0;
+    transform: scale(0.985);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      overlay 180ms ease allow-discrete,
+      display 180ms ease allow-discrete;
+  }
+
+  .lightbox[open] {
+    display: grid;
+    opacity: 1;
+    transform: none;
+  }
+
+  @starting-style {
+    .lightbox[open] {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+  }
+
+  .lightbox::backdrop {
+    background: rgba(10, 10, 10, 0.9);
+  }
+
+  .lightbox__bar {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2rem;
+  }
+
+  .lightbox__count,
+  .lightbox__close,
+  .lightbox__nav,
+  .lightbox__figure figcaption {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .lightbox__count {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .lightbox__close,
+  .lightbox__nav {
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .lightbox__close {
+    min-height: 1.75rem;
+    padding: 2px 8px;
+  }
+
+  .lightbox__close:hover,
+  .lightbox__close:focus-visible,
+  .lightbox__nav:hover,
+  .lightbox__nav:focus-visible {
+    background: #beadff;
+    color: #171717;
+  }
+
+  .lightbox__close:focus-visible,
+  .lightbox__nav:focus-visible {
+    outline: 0.125rem solid #ffffff;
+    outline-offset: 0.125rem;
+  }
+
+  .lightbox__nav {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0 0.4rem;
+  }
+
+  .lightbox__nav[hidden] {
+    display: none;
+  }
+
+  .lightbox__figure {
+    display: flex;
+    min-width: 0;
+    max-height: 100%;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .lightbox__figure img {
+    display: block;
+    width: auto;
+    max-width: min(68rem, 100%);
+    height: auto;
+    max-height: calc(100svh - 8.5rem);
+    object-fit: contain;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  }
+
+  .lightbox__figure figcaption {
+    max-width: 40rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    text-align: center;
+  }
+
+  @media (max-width: 39.999rem) {
+    .lightbox {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+    }
+
+    .lightbox__nav--prev {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .lightbox__nav--next {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    .lightbox__figure {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  @media (hover: none) {
+    .zoom-frame::after {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zoom-frame::after,
+    .lightbox {
+      transition: none;
+    }
+  }
+
+  @media print {
+    .zoom-frame::after,
+    .lightbox {
+      display: none !important;
+    }
+  }
+</style>
