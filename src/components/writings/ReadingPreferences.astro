@@ -1,0 +1,382 @@
+<div class="reading-dock" data-reading-root>
+  <button
+    class="reading-orb"
+    type="button"
+    popovertarget="reading-prefs"
+    aria-label="Reading settings"
+  >
+    Aa
+  </button>
+  <div
+    id="reading-prefs"
+    class="reading-panel"
+    popover="auto"
+    aria-labelledby="reading-prefs-title"
+    data-reading-panel
+  >
+    <div class="reading-panel__head">
+      <p id="reading-prefs-title">Reading</p>
+      <button
+        class="reading-panel__close"
+        type="button"
+        popovertarget="reading-prefs"
+        popovertargetaction="hide"
+      >
+        Close
+      </button>
+    </div>
+
+    <div class="reading-presets" role="group" aria-label="Presets">
+      <button class="reading-preset" type="button" data-preset="default" aria-pressed="true">
+        <span
+          class="reading-preset__swatch"
+          style="--swatch:#ffffff;--swatch-ink:#171717"
+        ></span>
+        Default
+      </button>
+      <button class="reading-preset" type="button" data-preset="paper" aria-pressed="false">
+        <span
+          class="reading-preset__swatch"
+          style="--swatch:#f4efe4;--swatch-ink:#1c1712"
+        ></span>
+        Paper
+      </button>
+      <button class="reading-preset" type="button" data-preset="night" aria-pressed="false">
+        <span
+          class="reading-preset__swatch"
+          style="--swatch:#141414;--swatch-ink:#eceae4"
+        ></span>
+        Night
+      </button>
+      <button class="reading-preset" type="button" data-preset="focus" aria-pressed="false">
+        <span
+          class="reading-preset__swatch"
+          style="--swatch:#f7f7f5;--swatch-ink:#111111"
+        ></span>
+        Focus
+      </button>
+    </div>
+
+    <div class="reading-fonts" role="group" aria-label="Font">
+      <button type="button" data-font="sans" aria-pressed="true">Sans</button>
+      <button type="button" data-font="serif" aria-pressed="false">Serif</button>
+      <button type="button" data-font="mono" aria-pressed="false">Mono</button>
+    </div>
+
+    <label class="reading-field">
+      <span>Size <span data-reading-value="size">14px</span></span>
+      <input
+        type="range"
+        min="14"
+        max="22"
+        step="1"
+        value="14"
+        data-reading-control="size"
+      />
+    </label>
+    <label class="reading-field">
+      <span>Leading <span data-reading-value="leading">1.55</span></span>
+      <input
+        type="range"
+        min="1.45"
+        max="1.9"
+        step="0.05"
+        value="1.55"
+        data-reading-control="leading"
+      />
+    </label>
+    <label class="reading-field">
+      <span>Column <span data-reading-value="measure">640px</span></span>
+      <input
+        type="range"
+        min="32"
+        max="48"
+        step="1"
+        value="40"
+        data-reading-control="measure"
+      />
+    </label>
+    <label class="reading-field">
+      <span>Inset <span data-reading-value="gutter">25px</span></span>
+      <input
+        type="range"
+        min="1"
+        max="3"
+        step="0.0625"
+        value="1.5625"
+        data-reading-control="gutter"
+      />
+    </label>
+
+    <div class="reading-colors">
+      <label class="reading-field">
+        <span>Background</span>
+        <input type="color" value="#ffffff" data-reading-control="canvas" />
+      </label>
+      <label class="reading-field">
+        <span>Text</span>
+        <input type="color" value="#171717" data-reading-control="ink" />
+      </label>
+    </div>
+
+    <button class="reading-reset" type="button" data-reading-reset>Use default</button>
+    <p class="reading-panel__note">Saved in this browser.</p>
+    <p class="reading-panel__note" data-reading-note hidden>
+      Reading settings could not be saved in this browser.
+    </p>
+  </div>
+</div>
+
+<script>
+  import "../../scripts/reading-preferences";
+</script>
+
+<style is:global>
+  html[data-reading-scheme="dark"] {
+    --color-code-bg: #ffffff;
+    --color-code-fg: #24292f;
+    --cb-bar-bg: #f5f5f5;
+    --cb-bar-border: #e6e6e6;
+    --cb-gutter-color: #8b8b8b;
+    --cb-button-bg-hover: rgba(0, 0, 0, 0.06);
+    --cb-button-bg-active: rgba(0, 0, 0, 0.1);
+    --cb-scrollbar-thumb: #c9c9c9;
+    --cb-scrollbar-track: #f5f5f5;
+  }
+</style>
+
+<style>
+  .reading-orb {
+    position: fixed;
+    left: max(1rem, env(safe-area-inset-left));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 21;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    padding: 0;
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  }
+
+  .reading-orb:hover,
+  .reading-orb:focus-visible {
+    background: var(--color-accent);
+    color: var(--color-ink-strong);
+  }
+
+  .reading-orb:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  .reading-panel {
+    position: fixed;
+    inset: auto auto max(4.35rem, calc(env(safe-area-inset-bottom) + 4.35rem))
+      max(1rem, env(safe-area-inset-left));
+    z-index: 30;
+    width: min(18.75rem, calc(100vw - 2rem));
+    max-height: min(32rem, calc(100svh - 6rem));
+    margin: 0;
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow: auto;
+    border: 1px solid var(--color-rule);
+    padding: 0.85rem 0.9rem;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    opacity: 0;
+    transform: translateY(0.35rem);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease,
+      overlay 160ms ease allow-discrete,
+      display 160ms ease allow-discrete;
+  }
+
+  .reading-panel:popover-open {
+    display: flex;
+    opacity: 1;
+    transform: none;
+  }
+
+  @starting-style {
+    .reading-panel:popover-open {
+      opacity: 0;
+      transform: translateY(0.35rem);
+    }
+  }
+
+  .reading-panel__head,
+  .reading-field,
+  .reading-fonts {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .reading-panel__head p,
+  .reading-field,
+  .reading-fonts button,
+  .reading-preset,
+  .reading-reset,
+  .reading-panel__note,
+  .reading-panel__close {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-body);
+  }
+
+  .reading-panel__head p {
+    margin: 0;
+    color: var(--color-ink-strong);
+  }
+
+  .reading-panel__close,
+  .reading-fonts button,
+  .reading-preset,
+  .reading-reset {
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .reading-panel__close {
+    min-height: 1.5rem;
+    padding: 2px 6px;
+    color: var(--color-label-muted);
+  }
+
+  .reading-panel__close:hover,
+  .reading-panel__close:focus-visible,
+  .reading-reset:hover,
+  .reading-reset:focus-visible {
+    color: var(--color-ink-strong);
+  }
+
+  .reading-presets {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .reading-preset {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    border: 1px solid var(--color-rule);
+    padding: 0.35rem;
+    text-align: start;
+  }
+
+  .reading-preset[aria-pressed="true"],
+  .reading-fonts button[aria-pressed="true"] {
+    border-color: var(--color-ink-strong);
+    background: var(--color-ink-strong);
+    color: var(--color-pill-ink);
+  }
+
+  .reading-preset__swatch {
+    display: block;
+    height: 1.55rem;
+    background:
+      linear-gradient(var(--swatch-ink), var(--swatch-ink)) 0.3rem 0.42rem /
+        68% 2px no-repeat,
+      linear-gradient(var(--swatch-ink), var(--swatch-ink)) 0.3rem 0.72rem /
+        42% 2px no-repeat,
+      var(--swatch);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--swatch-ink) 20%, transparent);
+  }
+
+  .reading-fonts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .reading-fonts button {
+    min-height: 1.75rem;
+    border: 1px solid var(--color-rule);
+    padding: 0.2rem 0.35rem;
+  }
+
+  .reading-field {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.3rem;
+    color: var(--color-label-muted);
+  }
+
+  .reading-field span span {
+    color: var(--color-ink-strong);
+  }
+
+  .reading-field input[type="range"] {
+    width: 100%;
+    accent-color: var(--color-ink-strong);
+  }
+
+  .reading-colors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .reading-field input[type="color"] {
+    width: 100%;
+    height: 1.75rem;
+    border: 1px solid var(--color-rule);
+    padding: 0;
+    background: transparent;
+  }
+
+  .reading-reset {
+    align-self: flex-start;
+    padding: 0;
+    color: var(--color-label-muted);
+  }
+
+  .reading-panel__note {
+    margin: 0;
+    color: var(--color-label-muted);
+  }
+
+  .reading-panel__close:focus-visible,
+  .reading-preset:focus-visible,
+  .reading-fonts button:focus-visible,
+  .reading-reset:focus-visible,
+  .reading-field input:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reading-panel {
+      transition: none;
+    }
+  }
+
+  @media print {
+    .reading-orb,
+    .reading-panel {
+      display: none !important;
+    }
+  }
+</style>
