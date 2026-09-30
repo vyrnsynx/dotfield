@@ -9,6 +9,12 @@ import {
   type WritingTaxonomyItem,
 } from "../data/writings";
 import { assertEnglishCopy } from "./english";
+import {
+  rankWritingsForIndex,
+  scoreWritingRecommendation,
+} from "./recommend";
+
+export { rankWritingsForIndex, scoreWritingRecommendation };
 
 export type WritingEntry = CollectionEntry<"writings">;
 
@@ -43,6 +49,7 @@ export interface WritingSearchDocument {
   category: WritingTaxonomyReference;
   tags: readonly WritingTaxonomyReference[];
   readingMinutes: number;
+  recommendScore: number;
 }
 
 export interface SitemapEntry {
@@ -289,6 +296,7 @@ export function toWritingSearchDocument(
     category: article.category,
     tags: article.tags,
     readingMinutes: article.readingMinutes,
+    recommendScore: Number(scoreWritingRecommendation(article).toFixed(6)),
   };
 }
 

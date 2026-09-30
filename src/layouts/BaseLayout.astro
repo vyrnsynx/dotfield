@@ -1,4 +1,5 @@
 ---
+import readingBootSource from "../scripts/reading-boot.js?raw";
 import interLatin400 from "@fontsource/inter/files/inter-latin-400-normal.woff2?url";
 import interLatin500 from "@fontsource/inter/files/inter-latin-500-normal.woff2?url";
 import Analytics from "@vercel/analytics/astro";
@@ -39,6 +40,10 @@ const {
 } = Astro.props;
 
 const resolvedCanonicalPath = canonicalPath ?? Astro.url.pathname;
+const readingSurface =
+  resolvedCanonicalPath === "/writings/" ||
+  resolvedCanonicalPath.startsWith("/writings/");
+const readingBoot = readingSurface ? readingBootSource : "";
 const canonicalUrl = absoluteUrl(resolvedCanonicalPath);
 const imageUrl = ogImage ? absoluteUrl(ogImage) : defaultOgImageUrl();
 const structuredData = JSON.stringify(siteGraphJsonLd(jsonLd)).replaceAll(
@@ -156,6 +161,11 @@ function openGraphTypeValue(value: OgType): string {
     {
       prefetchWritings ? (
         <script type="speculationrules" set:html={speculationRules} />
+      ) : null
+    }
+    {
+      readingSurface ? (
+        <Fragment set:html={`<script>${readingBoot}</script>`} />
       ) : null
     }
   </head>

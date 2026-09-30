@@ -66,7 +66,8 @@ operations are in `docs/WRITINGS.md`.
 | Fonts          | `@fontsource/inter` Latin 400 and 500, hashed WOFF2 at build time         |
 | Styling        | Scoped Astro CSS plus `src/styles/tokens.css`                             |
 | Search         | Prerendered JSON + vanilla `src/scripts/writings-search.ts`               |
-| Article extras | `src/scripts/article-code-blocks.ts` (Copy) and a tiny back-to-top toggle |
+| Article extras | Copy control, back-to-top, image lightbox, local reading presets          |
+| Images         | Build-time responsive WebP. Sources in git are not rewritten              |
 
 
 Astro 7 and `@fontsource/inter` are the only runtime dependencies. There

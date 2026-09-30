@@ -6,6 +6,8 @@ interface SearchState {
   tag: string;
 }
 
+type ListOrder = "recommend" | "chronological";
+
 interface SearchElements {
   form: HTMLFormElement;
   queryInput: HTMLInputElement;
@@ -62,7 +64,7 @@ function initializeSearch(root: HTMLElement): void {
         return;
       }
 
-      const matches = searchDocuments(documents, state);
+      const matches = searchDocuments(documents, state, listOrder());
       renderSearchResults(elements, matches);
       updateBrowserUrl(state);
     } catch {
@@ -111,6 +113,10 @@ function initializeSearch(root: HTMLElement): void {
   const hasUrlState = applyUrlState(elements);
   if (hasUrlState) {
     void runSearch();
+  }
+
+  function listOrder(): ListOrder {
+    return root.dataset.order === "recommend" ? "recommend" : "chronological";
   }
 }
 
@@ -226,7 +232,9 @@ function isWritingSearchDocument(
     isTaxonomyReference(value.category) &&
     Array.isArray(value.tags) &&
     value.tags.every(isTaxonomyReference) &&
-    typeof value.readingMinutes === "number"
+    typeof value.readingMinutes === "number" &&
+    typeof value.recommendScore === "number" &&
+    Number.isFinite(value.recommendScore)
   );
 }
 
@@ -245,6 +253,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function searchDocuments(
   documents: readonly WritingSearchDocument[],
   state: SearchState,
+  order: ListOrder,
 ): WritingSearchDocument[] {
   const queryTokens = normalizeSearchText(state.query)
     .split(/\s+/)
@@ -274,13 +283,34 @@ function searchDocuments(
       document,
       score: scoreDocument(document, queryTokens),
     }))
-    .sort(
-      (first, second) =>
-        second.score - first.score ||
-        Date.parse(second.document.pubDate) -
-          Date.parse(first.document.pubDate),
-    )
+    .sort((first, second) => {
+      const byRelevance = second.score - first.score;
+      if (byRelevance !== 0) {
+        return byRelevance;
+      }
+      return tieBreak(first.document, second.document, order);
+    })
     .map(({ document }) => document);
+}
+
+function tieBreak(
+  first: WritingSearchDocument,
+  second: WritingSearchDocument,
+  order: ListOrder,
+): number {
+  switch (order) {
+    case "recommend":
+      return (
+        second.recommendScore - first.recommendScore ||
+        Date.parse(second.pubDate) - Date.parse(first.pubDate)
+      );
+    case "chronological":
+      return Date.parse(second.pubDate) - Date.parse(first.pubDate);
+    default: {
+      const exhaustive: never = order;
+      return exhaustive;
+    }
+  }
 }
 
 function scoreDocument(

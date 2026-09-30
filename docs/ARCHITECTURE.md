@@ -206,7 +206,28 @@ deeper than `slug/index.md` are not part of the URL contract. Do not add
 
 ### Sorting
 
-Published entries sort featured-first, then newest `pubDate`, then title.
+Category pages, tag pages, and RSS stay in archive order: featured first,
+then newest `pubDate`, then title. The writings index does not. A featured
+flag used to pin an older article above every newer one.
+
+`/writings/` ranks with `scoreWritingRecommendation()` in
+`src/lib/recommend.ts`. The score is computed once at build time and is the
+same for every visitor:
+
+- Freshness of `updatedDate`, or `pubDate` when there is no update. The
+  half-life is 21 days, so a post from today outranks a post from last
+  month unless the older post is much stronger on the other signals.
+- Depth, from word count, capped once a piece reaches about 1,800 words.
+- A small featured lift, worth roughly six days of freshness. Featured
+  still appears as a caption. It does not pin the card to the top.
+- A small lift when `updatedDate` is at least two days after `pubDate`.
+
+Ties break by last modification time, then title. The index search uses
+the same score after text relevance. Category and tag search stay on
+relevance, then `pubDate`. The numeric score is stored on each search
+document as `recommendScore`. It is not a per-reader profile and it is
+not written to a cookie.
+
 Reading time is `ceil(wordCount / 220)` with a minimum of one minute. Fenced
 code, images, and most Markdown punctuation are stripped before the count.
 
@@ -272,7 +293,7 @@ taxonomy.
 The JSON payload contains only:
 
 `slug`, `url`, `title`, `description`, `author`, `pubDate`, `updatedDate`,
-`category`, `tags`, `readingMinutes`.
+`category`, `tags`, `readingMinutes`, `recommendScore`.
 
 Article bodies, draft files, Markdown source, and cover assets never enter
 the search payload.
@@ -302,6 +323,30 @@ The page assembles:
 - `ArticleProse` around the rendered body
 - `ArticleTableOfContents` for `h2` / `h3`
 - footer back links and a progressive `BackToTop`
+- `ImageLightbox` for cover and body images
+- `ReadingPreferences` on the index, category, tag, and article pages
+
+`ImageLightbox` is a native `<dialog>`. A deferred script turns each
+article image into a button. Click, Enter, or Space opens the full-size
+candidate from `srcset`. Arrow keys, on-screen Prev and Next, and a
+horizontal swipe move through the set. Escape, Close, and a click on the
+empty stage dismiss it. Without JavaScript the image stays in the column.
+The stage uses its own near-black frame so a Paper or Night reading
+preset does not tint the photograph.
+
+`ReadingPreferences` is the round “Aa” control fixed to the lower left.
+It uses the Popover API, so open, close, light dismiss, and Escape work
+before the settings script applies a value. The presets are Default,
+Paper (warm serif), Night, and Focus. After a preset, the reader can
+change font (sans, a system serif, or a system mono — no extra font
+download), size, leading, column, inset, background, and text color. Default clears the saved value and the design tokens
+return. Nothing is sent to the server. The choice lives in
+`localStorage` under `dotfield.reading.v1`, not in a cookie, so it is
+not attached to later requests. A short blocking script in the document
+head of `/writings/**` reads that key and sets CSS variables before
+first paint. If the key is missing or invalid, the script returns
+immediately and the page uses the current tokens. The homepage does not
+include the script.
 
 MDX is disabled. Raw HTML in Markdown is not part of the authoring contract.
 Supported surfaces are documented in `docs/WRITINGS.md`.
@@ -339,6 +384,15 @@ JSON-LD always includes `Person` and `WebSite`. Listing pages add
 `CollectionPage`, `ItemList`, and `BreadcrumbList`. Article pages add
 `BlogPosting` and breadcrumbs. Keywords and section come from tags and
 category; authors do not fill extra SEO fields.
+
+## Image delivery
+
+Article images stay in `src/content/writings/`. The build does not rewrite
+those bytes. `astro.config.mjs` turns local Markdown images and cover
+images into constrained WebP at 640, 960, and 1280 pixels wide, and never
+wider than the source. `src/image-service.mjs` encodes each size twice,
+lossless WebP and WebP quality 82, and keeps the smaller file. Files in
+`public/` are still copied unchanged.
 
 ## Edge delivery
 
@@ -388,8 +442,8 @@ Rules that must hold at every width:
 | Page | Scripts | Purpose |
 | --- | --- | --- |
 | `/` | console signature | JSON-LD plus a DevTools author/source banner |
-| `/writings/**` listings | `writings-search.ts` | Combined filters |
-| `/writings/post/**` | `article-code-blocks.ts` and `BackToTop` | Copy confirmation; show / hide the control |
+| `/writings/**` listings | inline reading boot, `writings-search.ts`, `reading-preferences.ts` | Restore a saved reading preset before paint; combined filters; the Aa panel |
+| `/writings/post/**` | those, plus `article-code-blocks.ts`, `article-lightbox.ts`, and `BackToTop` | Copy confirmation; image lightbox; show / hide the control |
 
 Every page includes the same non-network console signature. Writings listing
 and article pages also include a non-executable `speculationrules` block. If

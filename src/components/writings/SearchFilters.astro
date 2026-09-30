@@ -4,20 +4,30 @@ import type {
   WritingTaxonomyItem,
 } from "../../data/writings";
 
+type WritingListOrder = "recommend" | "chronological";
+
 interface Props {
   categories: readonly WritingCategory[];
   tags: readonly WritingTaxonomyItem[];
   initialCategory?: string;
   initialTag?: string;
+  order?: WritingListOrder;
 }
 
-const { categories, tags, initialCategory, initialTag } = Astro.props;
+const {
+  categories,
+  tags,
+  initialCategory,
+  initialTag,
+  order = "chronological",
+} = Astro.props;
 ---
 
 <section
   class="writing-search"
   data-writing-search
   data-index-url="/writings/search-index.json"
+  data-order={order}
   data-initial-category={initialCategory}
   data-initial-tag={initialTag}
   aria-label="Search and filter writings"

@@ -597,9 +597,16 @@ See [Article images](#article-images) for the shared folder and per-post
 files. In short:
 
 - Shared files live in `src/content/writings/images/`.
-- Local images next to `index.md` are bundled and resized by Astro.
+- Local images next to `index.md` are resized at build time. The files in
+  git are not rewritten.
+- Delivery is WebP at 640, 960, and 1280 pixels wide, never wider than
+  the source. Each size is encoded as lossless WebP and again at quality
+  82. The smaller file is the one published, so a diagram can stay
+  lossless and a photograph does not grow.
 - Remote `https://` images also render and are constrained to the article
   width.
+- In the reader, each content image can open in a lightbox. The control
+  is added in the browser. The Markdown stays a normal image.
 - Do not use the 13px site mark, or any other tiny chrome asset, as a
   full-width article image. It will upscale badly.
 - Decorative images still need `coverAlt` or Markdown alt text because the
@@ -641,7 +648,8 @@ Each document contains:
   "updatedDate": null,
   "category": { "slug": "notes", "label": "Notes" },
   "tags": [{ "slug": "writing", "label": "Writing" }],
-  "readingMinutes": 3
+  "readingMinutes": 3,
+  "recommendScore": 1.08421
 }
 ```
 
@@ -654,8 +662,9 @@ search form is a progressive enhancement:
 - No JavaScript: category and tag links still work.
 - With JavaScript: the controller lazy-loads the JSON once, combines the
   query with the category and tag selects, ranks title matches first,
-  updates the list, announces the result count, and writes shareable URL
-  parameters (`?q=backend&category=engineering&tag=astro`).
+  then uses `recommendScore` on `/writings/` and `pubDate` on category
+  and tag pages, updates the list, announces the result count, and writes
+  shareable URL parameters (`?q=backend&category=engineering&tag=astro`).
 
 Search does not need a library and must not grow into one.
 
@@ -676,6 +685,18 @@ On viewports narrower than `810px`, taxonomy stacks above the list. From
 `64rem`, articles with `h2` / `h3` headings gain a sticky “On this page”
 rail. The back-to-top control appears after the reader scrolls roughly
 `240` pixels; the footer link is the no-JavaScript equivalent.
+
+The round “Aa” control sits at the lower left of every writings page,
+including the index. It remembers font, size, leading, column, inset,
+background, and text color in `localStorage` for this browser only.
+Leave it untouched and the page keeps the design tokens. Presets are
+Default, Paper, Night, and Focus. The same saved value applies to the
+index, category pages, tag pages, and articles. It does not follow the
+reader onto the homepage, and it is not a cookie.
+
+Article images open in a lightbox from the image itself. Prev, Next,
+arrow keys, and a horizontal swipe move between pictures. Close,
+Escape, or a click on the empty stage leaves the article.
 
 ## Publishing checklist
 
